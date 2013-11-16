@@ -1,9 +1,10 @@
 ﻿<cfcomponent namespace="ArrayToXML" displayname="ArrayToXML" output="no" >
-	<!--- Array to XML by Daniel Gaspar <daniel.gaspar@gmail.com> 5/1/2008 --->
 
 	<cffunction name="init" access="public" output="no" returntype="any">
+		<cfargument name="Include_Type_Hinting" type="numeric" required="no" default="1" />
 		<cfargument name="XMLutils" type="any" required="yes" />
 		<cfargument name="TabUtils" type="any" required="yes" />
+		<cfset variables.Include_Type_Hinting = arguments.Include_Type_Hinting />	
 		<cfset variables.XMLutils = arguments.XMLutils />
 		<cfset variables.TabUtils = arguments.TabUtils />
 		<cfreturn this>
@@ -23,7 +24,7 @@
 		<cfprocessingdirective suppresswhitespace="yes">
 		<cfsetting enablecfoutputonly="yes">
 			<cfsavecontent variable="xmlString" >
-				<cfoutput>#variables.TabUtils.printtabs()#<#variables.XMLutils.getNodePlural(arguments.rootNodeName)#></cfoutput>
+				<cfoutput>#variables.TabUtils.printtabs()#<#variables.XMLutils.getNodePlural(arguments.rootNodeName)# <cfif variables.Include_Type_Hinting eq 1>CF_TYPE='array'</cfif>></cfoutput>
 						<cfoutput>#createXML(arguments.TheseItems,arguments.rootNodeName,arguments.AttributeList)#</cfoutput>				
 				<cfoutput>#variables.TabUtils.printtabs()#</#variables.XMLutils.getNodePlural(arguments.rootNodeName)#></cfoutput>
 			</cfsavecontent>
@@ -39,13 +40,15 @@
 		<cfset var thisSize = thisArray.size() />
 		<cfset var xmlString = "" />	
 		<cfset var i = 1 />			
+		<cfset var CurrentNode = '' />	
 		<cfset variables.TabUtils.addtab() />				
 		<cfprocessingdirective suppresswhitespace="yes">
 		<cfsetting enablecfoutputonly="yes">
 			<cfsavecontent variable="xmlString" >
 				<cfloop from="1" to="#thisSize#" index="i" >			
 					<cfif IsSimpleValue(thisArray[i])>
-							<cfoutput>#variables.TabUtils.printtabs()#<#rootNodeName#><![CDATA[#thisArray[i]#]]></#rootNodeName#></cfoutput>					
+						<cfset CurrentNode = variables.XMLutils.NodeNameCheck(rootNodeName) />
+						<cfoutput>#variables.TabUtils.printtabs()#<#CurrentNode#><![CDATA[#trim(thisArray[i])#]]></#CurrentNode#></cfoutput>					
 					<cfelse>
 						<!--- Yay for Recursion!--->	
 						<cfoutput>#variables.AnythingToXML.ToXML(thisArray[i],arguments.rootNodeName,arguments.AttributeList)#</cfoutput>

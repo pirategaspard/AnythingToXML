@@ -1,9 +1,10 @@
 ﻿<cfcomponent namespace="QueryToXML" displayname="QueryToXML" output="no" >
-	<!--- Query to XML by Daniel Gaspar <daniel.gaspar@gmail.com> 5/1/2008 --->
 
 	<cffunction name="init" access="public" output="no" returntype="any">
+		<cfargument name="Include_Type_Hinting" type="numeric" required="no" default="1" />
 		<cfargument name="XMLutils" type="any" required="yes" />
 		<cfargument name="TabUtils" type="any" required="yes" />
+		<cfset variables.Include_Type_Hinting = arguments.Include_Type_Hinting />
 		<cfset variables.XMLutils = arguments.XMLutils />
 		<cfset variables.TabUtils = arguments.TabUtils />
 		<cfreturn this>
@@ -28,9 +29,9 @@
 				<cfset variables.TabUtils.addtab() />		
 				<cfloop query="arguments.ThisQuery" >
 						<cfoutput>#variables.TabUtils.printtabs()#</cfoutput>
-						<cfoutput><#addNodeAttributes(arguments.rootNodeName,arguments.ThisQuery.columnlist,arguments.ThisQuery,arguments.AttributeList)#></cfoutput>
+						<cfoutput><#addNodeAttributes(arguments.rootNodeName,arguments.ThisQuery.columnlist,arguments.ThisQuery,arguments.AttributeList)# <cfif variables.Include_Type_Hinting eq 1>CF_TYPE='query'</cfif>></cfoutput>
 						<cfoutput>#createXML(arguments.ThisQuery,arguments.rootNodeName,arguments.AttributeList)#</cfoutput>
-						<cfoutput>#variables.TabUtils.printtabs()#</#arguments.rootNodeName#></cfoutput>
+						<cfoutput>#variables.TabUtils.printtabs()#</#variables.XMLutils.NodeNameCheck(arguments.rootNodeName)#></cfoutput>
 				</cfloop>
 				<cfset variables.TabUtils.removetab() />	
 				<cfoutput>#variables.TabUtils.printtabs()#</#variables.XMLutils.getNodePlural(arguments.rootNodeName)#></cfoutput>
@@ -46,6 +47,7 @@
 		<cfset var aColumns = ListToArray(thisQuery.columnList) />
 		<cfset var thisSize = aColumns.size() />
 		<cfset var xmlString = "" />	
+		<cfset var CurrentNode = '' />	
 		<cfset var i = 1 />			
 		<cfset variables.TabUtils.addtab() />				
 		<cfsetting enablecfoutputonly="yes">
@@ -54,7 +56,8 @@
 				<cfloop from="1" to="#thisSize#" index="i" >			
 					<cfif IsSimpleValue(evaluate("thisQuery." & aColumns[i]))>
 						<cfif not ListFindNoCase(arguments.AttributeList,aColumns[i])>
-							<cfoutput>#variables.TabUtils.printtabs()#<#aColumns[i]#><![CDATA[#evaluate("thisQuery." & aColumns[i])#]]></#aColumns[i]#></cfoutput>					
+							<cfset CurrentNode= variables.XMLutils.NodeNameCheck(aColumns[i]) />
+							<cfoutput>#variables.TabUtils.printtabs()#<#CurrentNode#><![CDATA[#trim(evaluate("thisQuery." & aColumns[i]))#]]></#CurrentNode#></cfoutput>					
 						</cfif>
 					<cfelse>	
 						<!--- Yay for Recursion!--->	
@@ -72,13 +75,13 @@
 		<cfargument name="thisKeyList" required="yes" type="string" hint="List of Column names, Struct Keys, object properties" />		
 		<cfargument name="thisElement" required="yes" type="any" hint="a Query or a Struct" />	
 		<cfargument name="thisAttributeList" required="yes" type="string" hint="List of Column Names/Struct Keys that should become Attributes of the XML Node" />
-		<cfset var returnString = arguments.thisNode />
+		<cfset var returnString = variables.XMLutils.NodeNameCheck(arguments.thisNode) />
 		<cfset var i = 1 />				
 					
 		<cfloop from="1"  to="#ListLen(arguments.thisAttributeList)#" index="i">
 			<cfif ListFindNoCase(arguments.thisKeyList, ListGetAt(arguments.thisAttributeList,i), ',' )>			
-				<cfset returnString = returnString & ' ' & ListGetAt(arguments.thisAttributeList,i) & '="' />								
-				<cfset returnString = returnString & xmlformat(evaluate("arguments.thisElement." & ListGetAt(arguments.thisAttributeList,i))) & '"' />		
+				<cfset returnString = returnString & ' ' & lCase(ListGetAt(arguments.thisAttributeList,i)) & '="' />								
+				<cfset returnString = returnString & xmlformat(trim(evaluate("arguments.thisElement." & ListGetAt(arguments.thisAttributeList,i)))) & '"' />		
 			</cfif>
 		</cfloop>
 								

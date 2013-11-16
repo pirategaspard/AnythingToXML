@@ -1,6 +1,5 @@
 ﻿<cfcomponent displayname="TabUtils" namespace="TabUtils" output="no">
-	<!--- Tab Utilities by Daniel Gaspar <daniel.gaspar@gmail.com> 5/1/2008 --->
-	<!---  Keeps track of tabs 'n	prints them	-Dg--->
+	<!---  Keeps track of tabs 'n prints them	-Dg--->
 
 	<cfproperty name="tabs" default="0" type="numeric" />
 	
@@ -8,6 +7,11 @@
 		<cfargument name="tabs" type="numeric" required="no" default="0" />
 		<cfset this.tabs = arguments.tabs />	
 		<cfreturn this>
+	</cffunction>
+	
+	<cffunction name="setTabs" access="public" output="no" returntype="any">
+		<cfargument name="tabs" type="numeric" required="no" default="#this.tabs#" />
+		<cfset this.tabs = arguments.tabs />	
 	</cffunction>
 	
 	<cffunction name="addtab" access="public" output="no" returntype="void">

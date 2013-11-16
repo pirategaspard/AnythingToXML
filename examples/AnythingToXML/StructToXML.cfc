@@ -1,9 +1,10 @@
 ﻿<cfcomponent namespace="StructToXML" displayname="StructToXML" output="no" >
-	<!--- Structure to XML by Daniel Gaspar <daniel.gaspar@gmail.com> 5/1/2008 --->
-	
+
 	<cffunction name="init" access="public" output="no" returntype="any">
+		<cfargument name="Include_Type_Hinting" type="numeric" required="no" default="1" />
 		<cfargument name="XMLutils" type="any" required="yes" />
 		<cfargument name="TabUtils" type="any" required="yes" />
+		<cfset variables.Include_Type_Hinting = arguments.Include_Type_Hinting />
 		<cfset variables.XMLutils = arguments.XMLutils />
 		<cfset variables.TabUtils = arguments.TabUtils />
 		<cfreturn this>
@@ -25,9 +26,9 @@
 		<cfprocessingdirective suppresswhitespace="yes">
 			<cfsavecontent variable="xmlString" >
 						<cfoutput>#variables.TabUtils.printtabs()#</cfoutput>
-						<cfoutput><#addNodeAttributes(arguments.rootNodeName,StructKeyList(arguments.ThisStruct),arguments.ThisStruct,arguments.AttributeList)#></cfoutput>
+						<cfoutput><#addNodeAttributes(arguments.rootNodeName,StructKeyList(arguments.ThisStruct),arguments.ThisStruct,arguments.AttributeList)# <cfif variables.Include_Type_Hinting eq 1>CF_TYPE='struct'</cfif>></cfoutput>
 						<cfoutput>#createXML(arguments.ThisStruct,arguments.rootNodeName,arguments.AttributeList)#</cfoutput>
-						<cfoutput>#variables.TabUtils.printtabs()#</#arguments.rootNodeName#></cfoutput>
+						<cfoutput>#variables.TabUtils.printtabs()#</#variables.XMLutils.NodeNameCheck(arguments.rootNodeName)#></cfoutput>
 			</cfsavecontent>
 		</cfprocessingdirective>
 		<cfreturn xmlString />
@@ -40,7 +41,8 @@
 		<cfset var aKeys = ListToArray(StructKeyList(arguments.thisStruct)) />
 		<cfset var thisStructSize = StructCount(arguments.thisStruct) />
 		<cfset var xmlString = "" />	
-		<cfset var i = 1 />			
+		<cfset var i = 1 />		
+		<cfset var CurrentNode = '' />		
 		<cfset variables.TabUtils.addtab() />				
 		<cfsetting enablecfoutputonly="yes">
 		<cfprocessingdirective suppresswhitespace="yes">
@@ -48,7 +50,8 @@
 				<cfloop from="1" to="#thisStructSize#" index="i" >			
 					<cfif IsSimpleValue(thisStruct[aKeys[i]])>
 						<cfif not ListFindNoCase(arguments.AttributeList,aKeys[i])>
-							<cfoutput>#variables.TabUtils.printtabs()#<#aKeys[i]#><![CDATA[#thisStruct[aKeys[i]]#]]></#aKeys[i]#></cfoutput>					
+							<cfset CurrentNode= variables.XMLutils.NodeNameCheck(aKeys[i]) />
+							<cfoutput>#variables.TabUtils.printtabs()#<#CurrentNode#><![CDATA[#trim(thisStruct[aKeys[i]])#]]></#CurrentNode#></cfoutput>					
 						</cfif>
 					<cfelse>		
 						<!--- Yay for Recursion!--->	
@@ -66,12 +69,12 @@
 		<cfargument name="thisKeyList" required="yes" type="string" hint="List of Column names, Struct Keys, object properties" />		
 		<cfargument name="thisElement" required="yes" type="any" hint="a Query or a Struct" />	
 		<cfargument name="thisAttributeList" required="yes" type="string" hint="List of Column Names/Struct Keys that should become Attributes of the XML Node" />
-		<cfset var returnString = arguments.thisNode />
+		<cfset var returnString = variables.XMLutils.NodeNameCheck(arguments.thisNode) />
 		<cfset var i = 1 />				
 			
 		<cfloop from="1"  to="#ListLen(arguments.thisAttributeList)#" index="i">
 			<cfif ListFindNoCase(arguments.thisKeyList, ListGetAt(arguments.thisAttributeList,i), ',' )>			
-				<cfset returnString = returnString & ' ' & ListGetAt(arguments.thisAttributeList,i) & '="' />				
+				<cfset returnString = returnString & ' ' & lCase(ListGetAt(arguments.thisAttributeList,i)) & '="' />				
 				<cfset returnString = returnString & xmlformat(arguments.thisElement[ListGetAt(arguments.thisAttributeList,i)]) & '"' />
 			</cfif>				
 		</cfloop>
