@@ -3,6 +3,11 @@ AnythingToXML
 
 Use this to generate complex and well formatted XML documents from Coldfusion data types
 
+Please see the wiki located at https://github.com/pirategaspard/AnythingToXML/wiki for examples on how to use this library
+
+I hope you find AnythingToXML useful!  
+\- Dan   
+http://danielgaspar.com
 
 
 ## Updates
