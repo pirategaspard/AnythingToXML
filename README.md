@@ -6,15 +6,16 @@ Use this to generate complex and well formatted XML documents from Coldfusion da
 
 
 ## Updates
-*2013/11/16 moved to github
-*2010/02/21 added CFtype hinting for use with XMLToAnything and more flexabilit for xml node naming. See XMLutils.cfc.
-*2008/10/09 added getter introspection for ObjectToXML.cfc with help from Brian Rinaldi
-*2008/07/09 fixed createXML() in ObjectToXML.cfc, and updated pluralexceptions() function in xmluti.cfc
-*2008/06/03 Added formatting to XML tags and started pluralexceptions() function in xmluti.cfc
-*2008/05/19 Added Examples
-*2008/05/08 fixed addNodeAttributes function in ObjectToXML.cfc
-*2008/05/01 initial release
-
+<ul>
+<li>2013/11/16 moved to github</li>
+<li>2010/02/21 added CFtype hinting for use with XMLToAnything and more flexabilit for xml node naming. See XMLutils.cfc.</li>
+<li>2008/10/09 added getter introspection for ObjectToXML.cfc with help from Brian Rinaldi</li>
+<li>2008/07/09 fixed createXML() in ObjectToXML.cfc, and updated pluralexceptions() function in xmluti.cfc</li>
+<li>2008/06/03 Added formatting to XML tags and started pluralexceptions() function in xmluti.cfc</li>
+<li>2008/05/19 Added Examples</li>
+<li>2008/05/08 fixed addNodeAttributes function in ObjectToXML.cfc</li>
+<li>2008/05/01 initial release</li>
+</ul>
 
 ## License (Simplified BSD)
 
