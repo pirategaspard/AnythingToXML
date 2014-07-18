@@ -2,6 +2,8 @@
 	<!--- Global functionality for XML creation: deciding on plural node names -Dg--->
 
 	<cffunction name="init" access="public" output="no" returntype="any">
+		<cfargument name="Capitalize_Node_Names" type="numeric" required="no" default="1" />
+		<cfset variables.Capitalize_Node_Names = arguments.Capitalize_Node_Names />
 		<cfreturn this>
 	</cffunction>
 	
@@ -37,7 +39,11 @@
 				<cfset Plural = "" />	
 			</cfdefaultcase>
 		</cfswitch>
-		<cfreturn ucase(Plural) />
+		<cfif variables.Capitalize_Node_Names >
+			<cfreturn ucase(Plural) />
+		<cfelse>
+			<cfreturn lcase(Plural) />
+		</cfif>
 	</cffunction>
 	
 	<cffunction name="NodeNameCheck" access="public" output="no" >
@@ -62,6 +68,10 @@
 				<cfset rename = arguments.ThisNode />	
 			</cfdefaultcase>
 		</cfswitch>
-		<cfreturn ucase(rename) />
+		<cfif variables.Capitalize_Node_Names >
+			<cfreturn ucase(rename) />
+		<cfelse>
+			<cfreturn lcase(rename) />
+		</cfif>
 	</cffunction>
 </cfcomponent>

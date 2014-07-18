@@ -3,8 +3,9 @@
 
 	<cffunction name="init" access="public" output="no" returntype="any">
 		<cfargument name="Include_Type_Hinting" type="numeric" required="no" default="1" />
+		<cfargument name="Capitalize_Node_Names" type="numeric" required="no" default="1" />
 		<cfset variables.TabUtils =	createObject('component', 'TabUtils').init() />		
-		<cfset variables.XMLutils =	createObject('component', 'XMLutils').init() />			
+		<cfset variables.XMLutils =	createObject('component', 'XMLutils').init(arguments.Capitalize_Node_Names) />			
 		<cfset variables.StructToXML = createObject('component','StructToXML').init(arguments.Include_Type_Hinting,XMLutils,TabUtils) />
 		<cfset variables.QueryToXML = createObject('component','QueryToXML').init(arguments.Include_Type_Hinting,XMLutils,TabUtils) />
 		<cfset variables.ArrayToXML = createObject('component','ArrayToXML').init(arguments.Include_Type_Hinting,XMLutils,TabUtils) />
