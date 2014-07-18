@@ -19,22 +19,27 @@
 		<cfargument name="ThisQuery" type="Query" required="yes">
 		<cfargument name="rootNodeName" type="string" required="no" default="">
 		<cfargument name="AttributeList" type="string" required="no" default="">
+		<cfargument name="skipPluralsList" type="string" required="no" default="">
 		<cfset var xmlString = "" />	
 		<cfset var i = 1 />		
-			
+		<cfset var flag_skipPlurals = ListFindNoCase(arguments.skipPluralsList,arguments.rootNodeName) >
 		<cfsetting enablecfoutputonly="yes">
 		<cfprocessingdirective suppresswhitespace="yes">
 			<cfsavecontent variable="xmlString" >
-				<cfoutput>#variables.TabUtils.printtabs()#<#variables.XMLutils.getNodePlural(arguments.rootNodeName)#></cfoutput>
-				<cfset variables.TabUtils.addtab() />		
+				<cfif NOT flag_skipPlurals >
+					<cfoutput>#variables.TabUtils.printtabs()#<#variables.XMLutils.getNodePlural(arguments.rootNodeName)#></cfoutput>
+					<cfset variables.TabUtils.addtab() />	
+				</cfif>					
 				<cfloop query="arguments.ThisQuery" >
 						<cfoutput>#variables.TabUtils.printtabs()#</cfoutput>
 						<cfoutput><#addNodeAttributes(arguments.rootNodeName,arguments.ThisQuery.columnlist,arguments.ThisQuery,arguments.AttributeList)# <cfif variables.Include_Type_Hinting eq 1>CF_TYPE='query'</cfif>></cfoutput>
-						<cfoutput>#createXML(arguments.ThisQuery,arguments.rootNodeName,arguments.AttributeList)#</cfoutput>
+						<cfoutput>#createXML(arguments.ThisQuery,arguments.rootNodeName,arguments.AttributeList,arguments.skipPluralsList)#</cfoutput>
 						<cfoutput>#variables.TabUtils.printtabs()#</#variables.XMLutils.NodeNameCheck(arguments.rootNodeName)#></cfoutput>
 				</cfloop>
-				<cfset variables.TabUtils.removetab() />	
-				<cfoutput>#variables.TabUtils.printtabs()#</#variables.XMLutils.getNodePlural(arguments.rootNodeName)#></cfoutput>
+				<cfif NOT flag_skipPlurals >
+					<cfset variables.TabUtils.removetab() />	
+					<cfoutput>#variables.TabUtils.printtabs()#</#variables.XMLutils.getNodePlural(arguments.rootNodeName)#></cfoutput>
+				</cfif>
 			</cfsavecontent>
 		</cfprocessingdirective>
 		<cfreturn xmlString />
@@ -44,6 +49,7 @@
 		<cfargument name="thisQuery" type="Query" required="yes">
 		<cfargument name="rootNodeName" type="string" required="no" default="">
 		<cfargument name="AttributeList" type="string" required="no" default="">
+		<cfargument name="skipPluralsList" type="string" required="no" default="">
 		<cfset var aColumns = ListToArray(thisQuery.columnList) />
 		<cfset var thisSize = aColumns.size() />
 		<cfset var xmlString = "" />	
@@ -61,7 +67,7 @@
 						</cfif>
 					<cfelse>	
 						<!--- Yay for Recursion!--->	
-						<cfoutput>#variables.AnythingToXML.ToXML(evaluate("thisQuery." & aColumns[i]), aColumns[i],arguments.AttributeList)#</cfoutput>
+						<cfoutput>#variables.AnythingToXML.ToXML(evaluate("thisQuery." & aColumns[i]), aColumns[i],arguments.AttributeList,arguments.skipPluralsList)#</cfoutput>
 					</cfif>
 				</cfloop>	
 			</cfsavecontent>

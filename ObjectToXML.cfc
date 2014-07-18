@@ -20,6 +20,7 @@
 		<cfargument name="ThisObj" type="any" required="yes">
 		<cfargument name="rootNodeName" type="string" required="no" default="">
 		<cfargument name="AttributeList" type="string" required="no" default="">
+		<cfargument name="skipPluralsList" type="string" required="no" default="">
 		<cfset var xmlString = "" />	
 		<cfset var i = 1 />		
 		<cfset var AttributeCollection = getMetaData(arguments.ThisObj).properties />													
@@ -28,7 +29,7 @@
 			<cfsavecontent variable="xmlString" >
 						<cfoutput>#variables.TabUtils.printtabs()#</cfoutput>
 						<cfoutput><#addNodeAttributes(arguments.rootNodeName,AttributeCollection,arguments.ThisObj,arguments.AttributeList)# <cfif variables.Include_Type_Hinting eq 1>CF_TYPE='object'</cfif>></cfoutput>
-						<cfoutput>#createXML(arguments.ThisObj,arguments.rootNodeName,arguments.AttributeList)#</cfoutput>
+						<cfoutput>#createXML(arguments.ThisObj,arguments.rootNodeName,arguments.AttributeList,arguments.skipPluralsList)#</cfoutput>
 						<cfoutput>#variables.TabUtils.printtabs()#</#variables.XMLutils.NodeNameCheck(arguments.rootNodeName)#></cfoutput>
 			</cfsavecontent>
 		</cfprocessingdirective>
@@ -39,6 +40,7 @@
 		<cfargument name="ThisObj" type="any" required="yes">
 		<cfargument name="rootNodeName" type="string" required="no" default="">
 		<cfargument name="AttributeList" type="string" required="no" default="">
+		<cfargument name="skipPluralsList" type="string" required="no" default="">
 		<cfset var aProperties = getMetaData(ThisObj).properties />
 		<cfset var aMethods = getMetaData(ThisObj).functions />
 		<cfset var methodName = "" />
@@ -62,7 +64,7 @@
 							</cfif>
 						<cfelse>
 								<!--- Yay for Recursion!--->	
-								<cfoutput>#variables.AnythingToXML.ToXML(ThisObj[aProperties[i].name], aProperties[i].name,arguments.AttributeList)#</cfoutput>
+								<cfoutput>#variables.AnythingToXML.ToXML(ThisObj[aProperties[i].name], aProperties[i].name,arguments.AttributeList,arguments.skipPluralsList)#</cfoutput>
 						</cfif>
 					<cfelse>
 						<cfif isdefined("ThisObj." & methodName) >
@@ -75,7 +77,7 @@
 								</cfif>
 							<cfelse>
 									<!--- Yay for Recursion!--->	
-									<cfoutput>#variables.AnythingToXML.ToXML(tmp, aProperties[i].name,arguments.AttributeList)#</cfoutput>
+									<cfoutput>#variables.AnythingToXML.ToXML(tmp, aProperties[i].name,arguments.AttributeList,arguments.skipPluralsList)#</cfoutput>
 							</cfif>
 						</cfif>
 					</cfif>

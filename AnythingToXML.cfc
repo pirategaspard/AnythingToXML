@@ -20,7 +20,8 @@
 	<cffunction name="ToXML" access="public" output="no" returntype="string" hint="This function converts simple types, arrays, queries, structures, objects with properties, or any combination of these to XML">
 		<cfargument name="ThisItem" type="any" required="yes" hint="simple type, array, query, structure, object with properties, or any combination of previous">
 		<cfargument name="NodeName" type="string" required="no" default="XML_ELEMENT" hint="name of a node">	
-		<cfargument name="AttributeList" type="string" required="no" default="" hint="List of Column Names/Struct Keys that should become Attributes of the XML Node" />	
+		<cfargument name="AttributeList" type="string" required="no" default="" hint="List of Column Names/Struct Keys that should become Attributes of the XML Node" />
+		<cfargument name="skipPluralsList" type="string" required="no" default="" hint="List of repeating Column Names/Struct Keys that should not be wrapped in a plural XML node" />	
 		<cfset var returnstring = "">				
 
 		<!---initalize cfc if it is not  --->	
@@ -38,13 +39,13 @@
 		<cfif isSimpleValue(ThisItem) >
 			<cfset returnstring = returnstring & "#variables.TabUtils.printtabs()#<#variables.XMLutils.NodeNameCheck(arguments.NodeName)#><![CDATA[#trim(ThisItem)#]]></#variables.XMLutils.NodeNameCheck(arguments.NodeName)#>" />	
 		<cfelseif isArray(ThisItem)>
-			<cfset returnstring = returnstring & variables.ArrayToXML.ArrayToXML(arguments.ThisItem,arguments.NodeName,arguments.AttributeList)>		
+			<cfset returnstring = returnstring & variables.ArrayToXML.ArrayToXML(arguments.ThisItem,arguments.NodeName,arguments.AttributeList,arguments.skipPluralsList)>		
 		<cfelseif isQuery(ThisItem)>		
-			<cfset returnstring = returnstring & variables.QueryToXML.QueryToXML(arguments.ThisItem,arguments.NodeName,arguments.AttributeList)>
+			<cfset returnstring = returnstring & variables.QueryToXML.QueryToXML(arguments.ThisItem,arguments.NodeName,arguments.AttributeList,arguments.skipPluralsList)>
 		<cfelseif structkeyexists(getMetaData(ThisItem), "properties") > 				
-			<cfset returnstring = returnstring & variables.ObjectToXML.ObjectToXML(arguments.ThisItem,arguments.NodeName,arguments.AttributeList)>
+			<cfset returnstring = returnstring & variables.ObjectToXML.ObjectToXML(arguments.ThisItem,arguments.NodeName,arguments.AttributeList,arguments.skipPluralsList)>
 		<cfelseif isStruct(ThisItem)>
-			<cfset returnstring = returnstring & variables.StructToXML.StructToXML(arguments.ThisItem,arguments.NodeName,arguments.AttributeList)>
+			<cfset returnstring = returnstring & variables.StructToXML.StructToXML(arguments.ThisItem,arguments.NodeName,arguments.AttributeList,arguments.skipPluralsList)>
 		<cfelseif IsCustomFunction(ThisItem)>
 			<!--- ignore --->
 		<cfelse>

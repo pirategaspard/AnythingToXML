@@ -7,8 +7,7 @@
 	
 	<cffunction name="getNodePlural" access="public" output="no" >
 		<cfargument name="ThisNode" type="string" required="yes" />
-		<cfset var Plural = "" />	
-		
+		<cfset var Plural = "" />			
 		<cfif PluralExceptions(ThisNode) neq "" >
 			<cfset plural = PluralExceptions(ThisNode)>
 		<cfelseif right(ThisNode,2) eq 'ey'>

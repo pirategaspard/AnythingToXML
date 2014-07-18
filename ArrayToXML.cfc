@@ -19,24 +19,30 @@
 		<cfargument name="TheseItems" type="array" required="yes">
 		<cfargument name="rootNodeName" type="string" required="no" default="">
 		<cfargument name="AttributeList" type="string" required="no" default="">
+		<cfargument name="skipPluralsList" type="string" required="no" default="">
 		<cfset var xmlString = "" />	
 		<cfset var i = 1 />
+		<cfset var flag_skipPlurals = ListFindNoCase(arguments.skipPluralsList,arguments.rootNodeName) >
 		<cfprocessingdirective suppresswhitespace="yes">
 		<cfsetting enablecfoutputonly="yes">
 			<cfsavecontent variable="xmlString" >
-				<cfoutput>#variables.TabUtils.printtabs()#<#variables.XMLutils.getNodePlural(arguments.rootNodeName)# <cfif variables.Include_Type_Hinting eq 1>CF_TYPE='array'</cfif>></cfoutput>
-						<cfoutput>#createXML(arguments.TheseItems,arguments.rootNodeName,arguments.AttributeList)#</cfoutput>				
-				<cfoutput>#variables.TabUtils.printtabs()#</#variables.XMLutils.getNodePlural(arguments.rootNodeName)#></cfoutput>
+				<cfif NOT flag_skipPlurals >
+					<cfoutput>#variables.TabUtils.printtabs()#<#variables.XMLutils.getNodePlural(arguments.rootNodeName)# <cfif variables.Include_Type_Hinting eq 1>CF_TYPE='array'</cfif>></cfoutput>
+				</cfif>
+				<cfoutput>#createXML(arguments.TheseItems,arguments.rootNodeName,arguments.AttributeList,arguments.skipPluralsList)#</cfoutput>
+				<cfif NOT flag_skipPlurals >
+					<cfoutput>#variables.TabUtils.printtabs()#</#variables.XMLutils.getNodePlural(arguments.rootNodeName)#></cfoutput>
+				</cfif>
 			</cfsavecontent>
 		</cfprocessingdirective>		
 		<cfreturn xmlString />
 	</cffunction>
 	
-	
 	<cffunction name="createXML" access="public" output="no" returntype="string">
 		<cfargument name="thisArray" type="Array" required="yes">
 		<cfargument name="rootNodeName" type="string" required="no" default="">
 		<cfargument name="AttributeList" type="string" required="no" default="">	
+		<cfargument name="skipPluralsList" type="string" required="no" default="">
 		<cfset var thisSize = thisArray.size() />
 		<cfset var xmlString = "" />	
 		<cfset var i = 1 />			
@@ -51,7 +57,7 @@
 						<cfoutput>#variables.TabUtils.printtabs()#<#CurrentNode#><![CDATA[#trim(thisArray[i])#]]></#CurrentNode#></cfoutput>					
 					<cfelse>
 						<!--- Yay for Recursion!--->	
-						<cfoutput>#variables.AnythingToXML.ToXML(thisArray[i],arguments.rootNodeName,arguments.AttributeList)#</cfoutput>
+						<cfoutput>#variables.AnythingToXML.ToXML(thisArray[i],arguments.rootNodeName,arguments.AttributeList,arguments.skipPluralsList)#</cfoutput>
 					</cfif>
 				</cfloop>	
 			</cfsavecontent>
