@@ -43,6 +43,9 @@
 		<cfset var xmlString = "" />	
 		<cfset var i = 1 />		
 		<cfset var CurrentNode = '' />
+		<cfset var stChild = '' />
+		<cfset var lChildKeys = '' />
+		<cfset var pos = '' />
 		<cfset var hoisted = false />	
 		<cfset variables.TabUtils.addtab() />				
 		<cfsetting enablecfoutputonly="yes">
